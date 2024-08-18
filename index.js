@@ -1,5 +1,4 @@
 import { MainPlayer } from './objects/main-player.js';
-import Controls from './objects/controls.js';
 import Rung from './objects/rung.js';
 
 var canvas = document.getElementById('canvas');

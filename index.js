@@ -1,41 +1,75 @@
+// game objects
 import { MainPlayer } from './objects/main-player.js';
-import Rung from './objects/rung.js';
+import Rungs from './objects/rung.js';
 
+// global variable object
+import G from './objects/g.js';
+
+// util functions
+import {handleGameOver, drawCount, checkCollision_and_pass} from './util.js';
+
+
+// initialize canvas
 var canvas = document.getElementById('canvas');
 var c = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth*0.6;
+canvas.height = canvas.width;
 
-var mouse = {
-    x: 0, 
-    y: 0
+
+// initialize variables and objects
+let g, mainPlayer, rungs, spawnInterval;
+function init() {
+
+    // initialize global variables
+    g = new G(canvas.width, canvas.height);
+
+    // initialize main player, add controls
+    mainPlayer = new MainPlayer(g.mainPlayerArgs);
+    mainPlayer.init_controls(document);
+
+    // initialize rungs
+    rungs = new Rungs(g.rungsArgs);    
+    
+    // begin interval for spawning rungs
+    spawnInterval = setInterval(() => {rungs.spawn_rung()}, g.spawnRate);      
 }
-document.addEventListener('mousemove', function(event) {mouse.x = event.clientX; mouse.y = event.clientY;});
 
-var mainPlayer = new MainPlayer('red');
-mainPlayer.init_controls(document);
 
-var rung = new Rung('black', {x: 500, y: 300}, {x: 0, y: 0}, Math.PI/4);
+
+
+
+
+
+
+
 
 function animate() {
+
+    // request next frame
     requestAnimationFrame(animate);
+
+    // clear previous canvas
     c.clearRect(0, 0, innerWidth, innerHeight);
 
-    // draw for mouse temporarily
-    c.beginPath();
-    c.fillStyle = 'blue';
-    c.arc(mouse.x, mouse.y, 10, 0, Math.PI*2, false);
-    c.fill();
+    // draw background image
+    c.drawImage(g.backgroundImg, 0, 0, canvas.width, canvas.height);
 
-    // get transformed point
-    if (rung.check_intersect(mouse.x, mouse.y, 10)) {
-        rung.color = 'green';
-    }
-    else {rung.color = 'black';}
-
+    // draw game objects
     mainPlayer.draw(c, canvas.width, canvas.height);
-    rung.draw(c);
+    rungs.garbage_collection();
+    rungs.draw(c);
+
+    // draw count
+    drawCount(c, g);
+
+    // handle collision and game over
+    if (checkCollision_and_pass(mainPlayer, rungs.rungsArray, g)) {
+        handleGameOver(mainPlayer, rungs.rungsArray, spawnInterval);
+    }
+    
 
 }
+
+init();
 animate();

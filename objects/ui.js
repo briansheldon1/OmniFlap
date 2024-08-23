@@ -73,6 +73,7 @@ export class Button {
         this.onClick = onClick;
         this.text = 'Button';
         this.background = 'white';
+        this.visible = true;
 
         // styles
         this.unClickedStyle = unClickedStyle;
@@ -80,10 +81,12 @@ export class Button {
         this.clicked = false;
 
         // initialize onClick with additional style change added
-        this.init_onClick(onClick);
+        this.setOnClick(onClick);
     }
-    init_onClick(onClick) {
+    setOnClick(onClick) {
+        // set onClick using wrapper 
         this.onClick = () => {
+            if (!this.visible) {return;}
             this.clicked = !this.clicked;
             onClick();
         }

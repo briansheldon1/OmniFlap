@@ -1,7 +1,8 @@
 export class MainPlayer {
-    constructor({img, gravity, radius, loc, friction, canvasWidth, canvasHeight, 
+    constructor({img, jumpSound, gravity, radius, loc, friction, canvasWidth, canvasHeight, 
                 jumpSpeed, leftRightSpeed}) {
         this.img = img;
+        this.jumpSound = jumpSound;
         this.gravity = gravity;
         this.radius = radius;
         this.imgSize = 1.3*Math.sqrt(2)*radius;
@@ -77,6 +78,8 @@ export class MainPlayer {
         }
 
         if (e.code == 'Space') {
+            this.jumpSound.currentTime = 0;
+            this.jumpSound.play();
             this.vel.y = -this.jumpSpeed;
             this.vel.theta = 1;
         }

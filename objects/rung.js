@@ -1,6 +1,6 @@
 export default class Rungs {
     constructor({spawnCenter, spawnRadius, rungSpeed, rungHeight, rungWidth, rungHoleHeight, 
-                columnHeadImg, columnPoleImg}) {
+                columnHeadImg, columnPoleImg, successSound}) {
         this.rungsArray = [];
 
         this.spawnCenter = spawnCenter;
@@ -14,6 +14,8 @@ export default class Rungs {
 
         this.columnHeadImg = columnHeadImg;
         this.columnPoleImg = columnPoleImg;
+
+        this.successSound = successSound;
     }
 
     draw(c) {
@@ -51,7 +53,7 @@ export default class Rungs {
 
         let color = 'black';
         let rung = new Rung(color, loc, vel, theta, this.rungHeight, this.rungWidth, rung_hole, this.rungHoleHeight, 
-                            this.columnHeadImg, this.columnPoleImg
+                            this.columnHeadImg, this.columnPoleImg, this.successSound
         );
         this.rungsArray.push(rung);
         this.total_rungs_so_far++;
@@ -63,7 +65,7 @@ export default class Rungs {
         });
     }
 
-    test_rung() {
+    testRung() {
         let rung = new Rung('black', {x: 300, y:300}, {x:0, y:0}, Math.PI/4, 400, 100, 100, 100, 
             this.columnHeadImg, this.columnPoleImg);
         this.rungsArray.push(rung);
@@ -85,7 +87,7 @@ export default class Rungs {
 
 class Rung {
     constructor(color, loc, vel, theta, height, width, hole, hole_height, 
-                head_image, pole_image) {
+                head_image, pole_image, successSound) {
         this.color = color;
         this.loc = loc;
         this.vel = vel;
@@ -94,6 +96,9 @@ class Rung {
         this.width = width || 50;
         this.hole = hole || 1000;
         this.hole_height = hole_height || 100;
+        
+        // sound for passing rung
+        this.successSound = successSound;
         
         // flag for rung having been passed
         this.passed = false;
@@ -226,7 +231,7 @@ class Rung {
 
         // intersect with top rung
         if (top_intersect) {
-            this.passed = true;
+             this.passed = true;
             return [true, 0];}
 
         let bot_intersect = this.check_intersect_circle_rect(
@@ -243,6 +248,7 @@ class Rung {
 
         // check if passed by if xt > width
         if (x_t > this.width) {
+            this.successSound.play();
             this.passed = true;
             return [false, 1];
         }

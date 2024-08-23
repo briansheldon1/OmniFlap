@@ -19,10 +19,13 @@ canvas.height = canvas.width;
 
 // initialize variables and objects
 let g, mainPlayer, rungs, spawnInterval;
+let backgroundMusic; // TESTING
 function init() {
 
     // initialize global variables
     g = new G(canvas.width, canvas.height);
+
+    g.backgroundMusic.play();
 
     // initialize main player, add controls
     mainPlayer = new MainPlayer(g.mainPlayerArgs);
@@ -65,6 +68,7 @@ function animate() {
 
     // handle collision and game over
     if (checkCollision_and_pass(mainPlayer, rungs.rungsArray, g)) {
+        g.failSound.play();
         handleGameOver(mainPlayer, rungs.rungsArray, spawnInterval);
     }
     

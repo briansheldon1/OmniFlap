@@ -22,15 +22,15 @@ export default class G {
         this.columnPoleImg.src = './assets/images/column_pole.png';
 
         this.backgroundImg = new Image();
-        this.backgroundImg.src = './assets/images/background_new.png';
+        this.backgroundImg.src = './assets/images/background.png';
     }
     init_count() {
         this.countConfig = {
-            font: `${Math.floor(this.canvasWidth/10)}px "Press Start 2P"`,
+            font: `${Math.floor(this.canvasWidth/13)}px "Press Start 2P"`,
             textAlign: 'center',
             textBaseline: 'middle',
             strokeStyle: 'black',
-            lineWidth: Math.floor(this.canvasWidth/30),
+            lineWidth: Math.floor(this.canvasWidth/60),
             fillStyle: 'white',
             loc: {
                 x: this.canvasWidth/2,
@@ -43,7 +43,7 @@ export default class G {
         this.mainPlayerArgs = {
             img: this.flappyImg,
             gravity: this.canvasWidth/6600.0,
-            radius: Math.floor(this.canvasWidth/25),
+            radius: Math.floor(this.canvasWidth/28),
             loc: {x: this.canvasWidth/2, y: this.canvasHeight/2},
             friction: 0.98, 
             canvasWidth: this.canvasWidth,
@@ -60,10 +60,10 @@ export default class G {
                 y: this.canvasHeight/2
             },
             spawnRadius: 0.5*(canvas.width**2 + canvas.height**2)**0.5,
-            rungSpeed: canvas.width/700,
+            rungSpeed: canvas.width/500,
             rungHeight: 1.1*Math.sqrt(canvas.width**2+canvas.height**2),
             rungWidth: Math.floor(canvas.width/7),
-            rungHoleHeight: Math.floor(canvas.width/3.5), 
+            rungHoleHeight: Math.floor(canvas.width/3.3), 
             columnHeadImg: this.columnHeadImg,
             columnPoleImg: this.columnPoleImg
         };

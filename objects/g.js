@@ -1,3 +1,5 @@
+import {UIFrame, Button, TextElement, ImageElement} from './ui.js';
+
 export default class G {
     constructor(canvasWidth, canvasHeight) {
 
@@ -8,6 +10,13 @@ export default class G {
 
         // flag for if game is over or mid-game
         this.gameOver = false;
+
+        // store default button styling
+        this.init_defButtonStyle();
+
+        // initialize simple start button at beginning 
+        // (necessary for  menu bkg music)
+        this.init_startButton1();
         
         // initialize images and sounds
         this.init_images();
@@ -21,6 +30,40 @@ export default class G {
         this.init_count();
 
     }
+    init_defButtonStyle() {
+        this.unClickedStyle = {
+            text: 'Button',
+            font: `${Math.floor(this.canvasWidth/40)}px "Press Start 2P"`,
+            fillStyle: 'white',
+            strokeStyle: 'black',
+            lineWidth: 0,
+            textAlign: 'center',
+            textBaseline: 'middle',
+            bkgColor: 'orange',
+            bkgBorderColor: 'black',
+            bkgBorderWidth: Math.floor(this.canvasWidth/200),
+        }
+
+        // set clicked style as deep copy and change some attributes
+        this.clickedStyle = JSON.parse(JSON.stringify(this.unClickedStyle));
+    }
+    init_startButton1() {
+        let buttonArgs = {
+            loc: {x: 0, y: 0},
+            width: this.canvasWidth/5,
+            height: this.canvasHeight/20,
+            unClickedStyle: this.unClickedStyle,
+            clickedStyle: this.clickedStyle
+        };
+
+        // center button
+        buttonArgs.loc.x -= buttonArgs.width/2;
+        buttonArgs.loc.y -= buttonArgs.height/2;
+        this.startButton1 = new Button(buttonArgs);
+        this.ui1 = new UIFrame({loc: {x: this.canvasWidth/2, y:this.canvasHeight/2}});
+        this.ui1.addElement(this.startButton1);
+    }
+
     init_images() {
         this.flappyImg = new Image();
         this.flappyImg.src = './assets/images/flappy_angel.png';

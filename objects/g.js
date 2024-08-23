@@ -1,13 +1,23 @@
 export default class G {
     constructor(canvasWidth, canvasHeight) {
+
+        // set canvasWidth and canvasHeight 
+        // (dictates game object sizes)
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
 
-        this.spawnRate = 4000; // ms between rung spawn
-
+        // flag for if game is over or mid-game
+        this.gameOver = false;
+        
+        // initialize images and sounds
         this.init_images();
+        this.init_sounds();
+
+        // initialize game objects (mainPlayer, rungs)
         this.init_mainPlayer();
         this.init_rungs();
+
+        // initialize counter and count visual configs
         this.init_count();
 
     }
@@ -23,6 +33,23 @@ export default class G {
 
         this.backgroundImg = new Image();
         this.backgroundImg.src = './assets/images/background.png';
+    }
+    init_sounds() {
+ 
+        this.volume = 0.5;
+
+        this.backgroundMusic = new Audio('./assets/sound/background-main.mp3');
+        this.backgroundMusic.loop = true;
+        this.backgroundMusic.volume = 0.5*this.volume;
+        
+        this.jumpSound = new Audio('./assets/sound/jump-sound.mp3');
+        this.jumpSound.volume = this.volume;
+
+        this.successSound = new Audio('./assets/sound/success-sound.mp3');
+        this.successSound.volume = this.volume;
+
+        this.failSound = new Audio('./assets/sound/fail-sound.mp3');
+        this.failSound.volume = this.volume;
     }
     init_count() {
         this.countConfig = {
@@ -49,11 +76,17 @@ export default class G {
             canvasWidth: this.canvasWidth,
             canvasHeight: this.canvasHeight,
             jumpSpeed: Math.floor(this.canvasHeight/80),
-            leftRightSpeed: Math.floor(this.canvasWidth/150)
+            leftRightSpeed: Math.floor(this.canvasWidth/150),
+            jumpSound: this.jumpSound
         };
     }
 
     init_rungs() {
+
+        // rung spawn rate (ms)
+        this.spawnRate = 4000;
+
+        // define rung sepcs (size, speed, etc.)
         this.rungsArgs = {
             spawnCenter: {
                 x: this.canvasWidth/2,
@@ -65,7 +98,8 @@ export default class G {
             rungWidth: Math.floor(canvas.width/7),
             rungHoleHeight: Math.floor(canvas.width/3.3), 
             columnHeadImg: this.columnHeadImg,
-            columnPoleImg: this.columnPoleImg
+            columnPoleImg: this.columnPoleImg,
+            successSound: this.successSound
         };
     }
 

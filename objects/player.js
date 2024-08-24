@@ -1,4 +1,4 @@
-export class MainPlayer {
+export default class Player {
     constructor({img, jumpSound, gravity, radius, loc, friction, canvasWidth, canvasHeight, 
                 jumpSpeed, leftRightSpeed}) {
         this.img = img;
@@ -25,7 +25,6 @@ export class MainPlayer {
     }
     draw(c) {
 
-        this.update();
         c.save();
         
         c.translate(this.loc.x, this.loc.y);
@@ -77,7 +76,7 @@ export class MainPlayer {
             return;
         }
 
-        if (e.code == 'Space') {
+        if (e.code == 'Space' || e.code == 'KeyW' || e.code == 'ArrowUp') {
             this.jumpSound.currentTime = 0;
             this.jumpSound.play();
             this.vel.y = -this.jumpSpeed;
@@ -91,5 +90,19 @@ export class MainPlayer {
             this.vel.x = -this.leftRightSpeed;
             this.pointing_right = -1;
         }
+        if (e.code=='KeyS' || e.code == 'ArrowDown') {
+            this.vel.y = 0.6*this.jumpSpeed;
+            this.vel.theta = -0.1;
+        }
+    }
+
+    reset({resetLoc}) {
+        if (resetLoc!==undefined && resetLoc) {
+            this.loc = {x: this.canvasWidth/2, y: this.canvasHeight/4};
+        }
+        this.halted = false;
+        this.vel = {x: 0, y: 0, theta: 0};
+        this.theta = Math.PI/8;
+        this.pointing_right = 1;
     }
 }

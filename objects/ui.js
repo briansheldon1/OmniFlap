@@ -2,7 +2,7 @@ export class UIFrame {
     constructor({loc}) {
 
         // array of elements within UI
-        this.elements = [];
+        this.elements = {};
 
         this.loc = loc;
 
@@ -18,40 +18,47 @@ export class UIFrame {
         if (!this.visible) {return;}
 
         // draw elements
-        this.elements.forEach(element => 
-                                 {element.draw(c);}
-                              );  
+        for (const [key, element] of Object.entries(this.elements)) {
+            element.draw(c);
+        }
 
     }
 
     handleClick(x, y) {
 
         // if not visible return early
-        if (!this.visible) {return;}
+        if (!this.visible) {return false;}
 
         // check each element to see if within click
         let x_rel = x - this.loc.x;
         let y_rel = y - this.loc.y;
-        for (let i=0; i<this.elements.length; i++) {
-            let element = this.elements[i];
+        
+        for (const [key, element] of Object.entries(this.elements)) {
             if (x_rel > element.loc.x && x_rel < element.loc.x + element.width && 
                 y_rel > element.loc.y && y_rel < element.loc.y + element.height) {
-                element.onClick();a
-                return; // only one element can be clicked
+                element.onClick();
+                return true; 
             }
         }
+        return false;
     }
-    addElement(element) {
+    addElement(key, element) {
+
+        // return early if key already exists
+        if (key in this.elements) {
+            return;
+        }
+
         // add element to elements array
-        this.elements.push(element);
+        
+        this.elements[key] = element;
         element.uiParent = this;
-        console.log(this.loc);
     }
 }
 
 
 export class Button {
-    constructor({uiParent, loc, width, height, unClickedStyle, clickedStyle, onClick}) {
+    constructor({uiParent, loc, width, height, style, onClick, centerBtn, text}) {
         /*  
             style: {
                 text (str): string of text to display on button
@@ -71,24 +78,35 @@ export class Button {
         this.width = width;
         this.height = height;
         this.onClick = onClick;
-        this.text = 'Button';
+        this.text = text;
         this.background = 'white';
         this.visible = true;
 
         // styles
-        this.unClickedStyle = unClickedStyle;
-        this.clickedStyle = clickedStyle;
-        this.clicked = false;
+        this.style = style;
+
+        // center the button if specified
+        if (centerBtn !== undefined && centerBtn) {
+            this.loc.x -= this.width/2;
+            this.loc.y -= this.height/2;
+        }
 
         // initialize onClick with additional style change added
-        this.setOnClick(onClick);
+        if (onClick !== undefined) {
+            this.setOnClick(onClick);
+        }
     }
-    setOnClick(onClick) {
+    setOnClick(onClickSet) {
+
         // set onClick using wrapper 
         this.onClick = () => {
             if (!this.visible) {return;}
-            this.clicked = !this.clicked;
-            onClick();
+            onClickSet();
+        }
+    }
+    setOnClickOnce(onClickSet) {
+        if (this.onClick === undefined) {
+            this.setOnClick(onClickSet);
         }
     }
     draw(c) {
@@ -112,26 +130,45 @@ export class Button {
     }
     applyTextStyle(c) {
 
-        // set style based on clicked
-        let style = this.clicked ? this.clickedStyle : this.unClickedStyle;
-
         // apply style for text
-        this.text = style.text;
-        c.font = style.font;
-        c.fillStyle = style.fillStyle;
-        c.strokeStyle = style.strokeStyle;
-        c.lineWidth = style.lineWidth;
-        c.textAlign = style.textAlign;
-        c.textBaseline = style.textBaseline;
+        c.font = this.style.font;
+        c.fillStyle = this.style.fillStyle;
+        c.strokeStyle = this.style.strokeStyle;
+        c.lineWidth = this.style.lineWidth;
+        c.textAlign = this.style.textAlign;
+        c.textBaseline = this.style.textBaseline;
     }
     applyBkgStyle(c) {
+        // apply style for background
+        c.fillStyle = this.style.bkgColor;
+        c.strokeStyle = this.style.bkgBorderColor;
+        c.lineWidth = this.style.bkgBorderWidth;
+    }
+    handleClick(x, y) {
+        /* Returns boolean of whether click went through */
 
-        // set style based on clicked
-        let style = this.clicked ? this.clickedStyle : this.unClickedStyle;
+        // only for if no ui parent exists
+        if (!(this.uiParent === undefined)) {
+            
+            return false;
+        }
 
-        c.fillStyle = style.bkgColor;
-        c.strokeStyle = style.bkgBorderColor;
-        c.lineWidth = style.bkgBorderWidth;
+        // if not visible return early
+        if (!(this.visible)) {
+            return false;
+        }
+        
+        // check if click is within button
+        if (x > this.loc.x && x < this.loc.x + this.width && 
+            y > this.loc.y && y < this.loc.y + this.height) {
+            
+            this.onClick();
+            return true;
+        }
+        return false;
+    }
+    changeText(text) {
+        this.text = text;
     }
 }
 

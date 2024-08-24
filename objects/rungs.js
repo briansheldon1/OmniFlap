@@ -16,9 +16,13 @@ export default class Rungs {
         this.columnPoleImg = columnPoleImg;
 
         this.successSound = successSound;
+
+        this.halted = false;
     }
 
     draw(c) {
+
+        // draw rungs
         this.rungsArray.forEach(rung => {
             rung.draw(c);
         });
@@ -59,10 +63,23 @@ export default class Rungs {
         this.total_rungs_so_far++;
     }
 
-    garbage_collection() {
+    garbageCollection() {
         this.rungsArray = this.rungsArray.filter(rung => {
             return (rung.loc.x-this.spawnCenter.x)**2 + (rung.loc.y-this.spawnCenter.y)**2 < 10*this.spawnRadius**2;
         });
+    }
+    update() {
+        if (this.halted) {return;}
+        this.garbageCollection();
+        this.rungsArray.forEach(rung => {
+            rung.update();
+        });
+    }
+
+    reset() {
+        this.rungsArray = [];
+        this.total_rungs_so_far = 0;
+        this.halted = false;
     }
 
     testRung() {
@@ -121,7 +138,7 @@ class Rung {
     }
 
     draw(c) {
-        this.update();
+
         c.save();
         c.translate(this.loc.x, this.loc.y);
         c.rotate(this.theta);

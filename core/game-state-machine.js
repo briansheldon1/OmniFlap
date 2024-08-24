@@ -5,7 +5,7 @@ export default class GameStateMachine {
         this.states = {
             PRE_GAME: new PreGameState(this),
             MENU: new MenuState(this),
-            PLAYING: new PlayingState(this),
+            CLASSIC: new ClassicMode(this),
             GAME_OVER: new GameOverState(this)
         };
         
@@ -88,7 +88,7 @@ class MenuState {
 
         // set onClick for each button
         this.gameManager.menuUI.elements['playButton'].setOnClick(() => {
-            this.machine.transitionTo('PLAYING');
+            this.machine.transitionTo('CLASSIC');
         })
 
         // play music
@@ -124,10 +124,10 @@ class MenuState {
 }
 
 
-// PLAYING (actual game state with game objects and game music)
-class PlayingState {
+// CLASSIC (actual game state with game objects and game music)
+class ClassicMode {
     constructor(machine) {
-        this.key = 'PLAYING';
+        this.key = 'CLASSIC';
         this.machine = machine;
         this.gameManager = machine.gameManager;
     }

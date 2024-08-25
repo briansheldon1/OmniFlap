@@ -25,6 +25,7 @@ export default class GameManager {
 
         // initialize counter and count visual configs
         this.init_count();
+        this.level = 1;
     }
 
     init_UIs() {
@@ -49,18 +50,20 @@ export default class GameManager {
      * Define default button styling for clicked and unclicked states
      */
     init_defButtonStyle() {
-        this.defaultBtnStyle = {
-            text: 'Button',
+        this.defaultBtnTextStyle = {
             font: `${Math.floor(this.canvasWidth/40)}px "Press Start 2P"`,
             fillStyle: 'white',
             strokeStyle: 'black',
             lineWidth: Math.floor(this.canvasWidth/100),
             textAlign: 'center',
             textBaseline: 'middle',
-            bkgColor: 'orange',
-            bkgBorderColor: 'black',
-            bkgBorderWidth: Math.floor(this.canvasWidth/200),
-        }
+            bkgColor: 'orange'
+        };
+        this.defaultBtnBkgStyle = {
+            fillStyle: 'orange',
+            strokeStyle: 'black',
+            lineWidth: Math.floor(this.canvasWidth/200)
+        };
         this.btnWidth = this.canvasWidth/3;
         this.btnHeight = this.canvasHeight/20;
         this.btnMarginTop = this.canvasHeight/40;
@@ -71,13 +74,15 @@ export default class GameManager {
     init_pregameStartBtn() {
 
         // Set style of button
-        let style = JSON.parse(JSON.stringify(this.defaultBtnStyle));
+        let textStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
+        let bkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
         let buttonArgs = {
             text: 'Start',
             loc: {x: this.canvasWidth/2, y: this.canvasHeight/2},
             width: this.canvasWidth/5,
             height: this.canvasHeight/20,
-            style: style,
+            textStyle: textStyle,
+            bkgStyle: bkgStyle,
             centerBtn: true
         };
 
@@ -96,14 +101,35 @@ export default class GameManager {
         this.menuUI = new UIFrame({loc: {x: this.canvasWidth/2, y: this.canvasHeight/2}});
         this.menuUI.visible = false;
 
+        // game title text element
+        /*
+        let titleStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
+        titleStyle.font = `${Math.floor(this.canvasWidth/10)}px "Press Start 2P"`;
+        titleStyle.fillStyle = 'orange';
+        titleStyle.lineWidth = 0;
+        let thisbkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
+        let titleArgs = {
+            text: 'Omni Flap',
+            loc: {x: -this.canvasWidth/3, y: -this.canvasHeight/5},
+            width: this.canvasWidth/2,
+            height: this.canvasHeight/10,
+            textStyle: titleStyle,
+            bkgStyle: thisbkgStyle
+        };
+        let title = new TextElement(titleArgs);
+        this.menuUI.addElement('title', title);
+        */
+
         // Classic button
-        let style = JSON.parse(JSON.stringify(this.defaultBtnStyle));
+        let textStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
+        let bkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
         let playButtonArgs = {
             text: 'Classic',
             loc: {x: 0, y: 0},
             width: this.btnWidth,
             height: this.btnHeight,
-            style: style,
+            textStyle: textStyle,
+            bkgStyle: bkgStyle,
             centerBtn: true
         };
         let playButton = new Button(playButtonArgs);
@@ -115,14 +141,15 @@ export default class GameManager {
             loc: {x: 0, y: this.btnMarginTop+this.btnHeight},
             width: this.btnWidth,
             height: this.btnHeight,
-            style: style,
+            textStyle: textStyle,
+            bkgStyle: bkgStyle,
             centerBtn: true
         };
-        let hyperButton = new Button(hyperButtonArgs);
-        this.menuUI.addElement('hyperButton', hyperButton);
+        this.hyperButton = new Button(hyperButtonArgs);
+        this.menuUI.addElement('hyperButton', this.hyperButton);
 
         // Settings button (halfWidth of other buttons)
-        let smallStyle = JSON.parse(JSON.stringify(style));
+        let smallStyle = JSON.parse(JSON.stringify(textStyle));
         smallStyle.font = `${Math.floor(this.canvasWidth/60)}px "Press Start 2P"`;
         let halfWidth = this.btnWidth*0.5*0.9;
         let settingsButtonArgs = {
@@ -130,7 +157,8 @@ export default class GameManager {
             loc: {x: (halfWidth-this.btnWidth)/2, y: 2*(this.btnMarginTop+this.btnHeight)},
             width: halfWidth,
             height: this.btnHeight,
-            style: smallStyle,
+            textStyle: smallStyle,
+            bkgStyle: bkgStyle,
             centerBtn: true
         };
         let settingsButton = new Button(settingsButtonArgs);
@@ -142,7 +170,8 @@ export default class GameManager {
             loc: {x: -(halfWidth-this.btnWidth)/2, y: 2*(this.btnMarginTop+this.btnHeight)},
             width: halfWidth,
             height: this.btnHeight,
-            style: smallStyle,
+            textStyle: smallStyle,
+            bkgStyle: bkgStyle,
             centerBtn: true
         };
         let creditsButton = new Button(creditsButtonArgs);
@@ -164,15 +193,17 @@ export default class GameManager {
         let halfWidth = btnWidth*0.5*0.95;
         
         // Restart button (halfWidth + smallStyle)
-        let style = JSON.parse(JSON.stringify(this.defaultBtnStyle));
-        let smallStyle = JSON.parse(JSON.stringify(style));
+        let textStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
+        let bkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
+        let smallStyle = JSON.parse(JSON.stringify(textStyle));
         smallStyle.font = `${Math.floor(this.canvasWidth/60)}px "Press Start 2P"`;
         let restartBtnArgs = {
             text: 'Restart',
             loc: {x: (halfWidth-btnWidth)/2, y: 0},
             width: halfWidth,
             height: this.btnHeight,
-            style: style,
+            textStyle: textStyle,
+            bkgStyle: bkgStyle,
             centerBtn: true
         };
         this.restartButton = new Button(restartBtnArgs);
@@ -184,7 +215,8 @@ export default class GameManager {
             loc: {x: -(halfWidth-btnWidth)/2, y: 0},
             width: halfWidth,
             height: this.canvasHeight/20,
-            style: style,
+            textStyle: textStyle,
+            bkgStyle: bkgStyle,
             centerBtn: true
         };
         this.mainMenuButton = new Button(mainMenuBtnArgs);
@@ -196,13 +228,12 @@ export default class GameManager {
             loc: {x: 0, y: this.canvasHeight/10},
             width: btnWidth,
             height: this.canvasHeight/20,
-            style: style,
+            textStyle: textStyle,
+            bkgStyle: bkgStyle,
             centerBtn: true
         };
         this.leaderboardButton = new Button(leaderboardBtnArgs);
         this.deathUI.addElement('leaderboardButton', this.leaderboardButton);
-
-
 
 
         // Add death UI to uiArray

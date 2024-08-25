@@ -5,7 +5,7 @@ export default class Player {
         this.jumpSound = jumpSound;
         this.gravity = gravity;
         this.radius = radius;
-        this.imgSize = 1.3*Math.sqrt(2)*radius;
+        this.imgSize = 1.4*Math.sqrt(2)*radius;
         this.loc = loc;
         this.vel = {
             x: 0,
@@ -32,6 +32,14 @@ export default class Player {
         c.scale(this.pointing_right, 1);
         c.translate(-this.loc.x, -this.loc.y);
         c.drawImage(this.img, this.loc.x - this.radius, this.loc.y - this.radius, 1.2*this.imgSize, this.imgSize);
+        
+        /* draw hitbox circle
+        c.beginPath();
+        c.arc(this.loc.x, this.loc.y, this.radius, 0, 2*Math.PI);
+        c.fillStyle = 'rgba(80, 0, 0, 0.5)';
+        c.fill();
+        */
+
 
         c.restore();
     }

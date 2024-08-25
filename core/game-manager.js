@@ -23,9 +23,8 @@ export default class GameManager {
         this.init_player();
         this.init_rungs();
 
-        // initialize counter and count visual configs
-        this.init_count();
-        this.level = 1;
+        // initialize counter, level, best score, etc
+        this.init_state();
     }
 
     init_UIs() {
@@ -185,36 +184,56 @@ export default class GameManager {
         let bkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
 
         // initialize death UI
-        this.deathUI = new UIFrame({loc: {x: this.canvasWidth/2, y: this.canvasHeight/2}});
+        this.deathUI = new UIFrame({loc: {x: this.canvasWidth/2, y: this.canvasHeight/5}});
         this.deathUI.visible = false;
 
-        let btnWidth = this.btnWidth*1.6;
+        let btnWidth = this.btnWidth*1.4;
         let halfWidth = btnWidth*0.5*0.95;
 
         // Death background box (technically text element)
         let deathBoxBkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
+        deathBoxBkgStyle.fillStyle = 'rgba(212, 207, 143, 1)';
+        let deathBoxHeight = this.canvasHeight/3;
+        let deathBoxWidth = btnWidth*0.5;
+        let deathBoxY = 0;
+        let deathBoxX = -deathBoxWidth/2; // center x
         let deathBoxBkgArgs = {
             text: '',
-            loc: {x: 0, y: -this.canvasHeight/6},
-            width: btnWidth*0.8,
-            height: this.canvasHeight/3,
+            loc: {x: deathBoxX, y: deathBoxY},
+            width: deathBoxWidth,
+            height: deathBoxHeight,
             bkgStyle: deathBoxBkgStyle,
-            centerText: true
+            cornerRadius: Math.floor(this.canvasWidth/60)
         };
         let deathBoxBkg = new TextElement(deathBoxBkgArgs);
         this.deathUI.addElement('deathBoxBkg', deathBoxBkg);
         
 
-
         // YourScoreLit text element
+        let litStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
+        litStyle.lineWidth = 0;
+        litStyle.font = `${Math.floor(this.canvasWidth/45)}px "Press Start 2P"`;
+        litStyle.fillStyle = 'rgb(230, 138, 0)';
+        let currHeight = deathBoxY+deathBoxHeight/5;
+        let yourScoreLitArgs = {
+            text: 'Score',
+            loc: {x: 0, y: currHeight},
+            width: this.canvasWidth/10,
+            height: this.canvasHeight/10,
+            textStyle: litStyle,
+            centerText: true
+        };
+        let yourScoreLit = new TextElement(yourScoreLitArgs);
+        this.deathUI.addElement('yourScoreLit', yourScoreLit);
 
         // YourScore text element
         let yourScoreTextStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
         yourScoreTextStyle.font = `${Math.floor(this.canvasWidth/20)}px "Press Start 2P"`;
         yourScoreTextStyle.lineWidth = Math.floor(this.canvasWidth/90);
+        currHeight += deathBoxHeight/6;
         let yourScoreArgs = {
             text: 0,
-            loc: {x: 0, y: -this.canvasHeight/4},
+            loc: {x: 0, y: currHeight},
             width: this.canvasWidth/10,
             height: this.canvasHeight/10,
             textStyle: yourScoreTextStyle,
@@ -223,15 +242,38 @@ export default class GameManager {
         this.yourScoreCount = new TextElement(yourScoreArgs);
         this.deathUI.addElement('yourScore', this.yourScoreCount);
 
-        // HighScoreLit text element
+        // BestScoreLit text element
+        currHeight += deathBoxHeight/5;
+        let bestScoreLitArgs = {
+            text: 'Best',
+            loc: {x: 0, y: currHeight},
+            width: this.canvasWidth/10,
+            height: this.canvasHeight/10,
+            textStyle: litStyle,
+            centerText: true
+        };
+        let bestScoreLit = new TextElement(bestScoreLitArgs);
+        this.deathUI.addElement('bestScoreLit', bestScoreLit);
 
-        // HighScore text element
+        // BestScore text element
+        currHeight += deathBoxHeight/6;
+        let bestScoreArgs = {
+            text: 0,
+            loc: {x: 0, y: currHeight},
+            width: this.canvasWidth/10,
+            height: this.canvasHeight/10,
+            textStyle: yourScoreTextStyle,
+            centerText: true
+        };
+        this.bestScoreCount = new TextElement(bestScoreArgs);
+        this.deathUI.addElement('bestScore', this.bestScoreCount);
 
         
         // Restart button (halfWidth + smallStyle)
+        currHeight = deathBoxY + deathBoxHeight + 2*this.btnHeight;
         let restartBtnArgs = {
             text: 'Restart',
-            loc: {x: (halfWidth-btnWidth)/2, y: 0},
+            loc: {x: (halfWidth-btnWidth)/2, y: currHeight},
             width: halfWidth,
             height: this.btnHeight,
             textStyle: textStyle,
@@ -245,7 +287,7 @@ export default class GameManager {
         // Main Menu button (halfWidth + smallStyle)
         let mainMenuBtnArgs = {
             text: 'Main Menu',
-            loc: {x: -(halfWidth-btnWidth)/2, y: 0},
+            loc: {x: -(halfWidth-btnWidth)/2, y: currHeight},
             width: halfWidth,
             height: this.btnHeight,
             textStyle: textStyle,
@@ -256,9 +298,10 @@ export default class GameManager {
         this.deathUI.addElement('mainMenuButton', this.mainMenuButton);
 
         // Leaderboard button
+        currHeight += this.btnHeight*1.6;
         let leaderboardBtnArgs = {
             text: 'Add To Leaderboard',
-            loc: {x: 0, y: this.canvasHeight/10},
+            loc: {x: 0, y: currHeight},
             width: btnWidth,
             height: this.btnHeight,
             textStyle: textStyle,
@@ -286,12 +329,19 @@ export default class GameManager {
         this.backgroundImg.src = './assets/images/background.png';
     }
     init_sounds() {
+
+        this.currentTrack = null;
+        this.currentTrackInterval = null;
  
         this.volume = 0.5;
 
         this.backgroundMusic = new Audio('./assets/sound/background-main.mp3');
         this.backgroundMusic.loop = true;
-        this.backgroundMusic.volume = 0.5*this.volume;
+        this.backgroundMusic.volume = 0.4*this.volume;
+
+        this.menuMusic = new Audio('./assets/sound/menu-music.mp3');
+        this.menuMusic.loop = true;
+        this.menuMusic.volume = 0.4*this.volume;
         
         this.jumpSound = new Audio('./assets/sound/jump-sound.mp3');
         this.jumpSound.volume = this.volume;
@@ -302,7 +352,9 @@ export default class GameManager {
         this.failSound = new Audio('./assets/sound/fail-sound.mp3');
         this.failSound.volume = this.volume;
     }
-    init_count() {
+    init_state() {
+
+        // counter
         this.countConfig = {
             font: `${Math.floor(this.canvasWidth/13)}px "Press Start 2P"`,
             textAlign: 'center',
@@ -316,6 +368,13 @@ export default class GameManager {
             }
         };
         this.count = 0;
+
+        // best count
+        this.bestClassic = localStorage.getItem('omniflap-bestClassic') || 0;
+        this.bestHyper = localStorage.getItem('omniflap-bestHyper') || 0;
+
+        // current level (hyper mode)
+        this.level = 1;
     }
     init_player() {
 
@@ -381,5 +440,88 @@ export default class GameManager {
         c.strokeText(this.count, this.countConfig.loc.x, this.countConfig.loc.y);
         c.fillText(this.count, this.countConfig.loc.x, this.countConfig.loc.y);
     }
+
+    changeTrack(newTrack, fadeInTime = 800, fadeOutTime = 1500) {
+
+        if (newTrack===this.currentTrack) {
+            return;
+        }
+
+        // Clear any existing intervals
+        if (this.currentTrackInterval) {
+            clearInterval(this.currentTrackInterval);
+        }
+    
+        // If no new track is provided, just fade out the current track
+        if (!newTrack) {
+            if (this.currentTrack) {
+                this.fadeOut(this.currentTrack, fadeOutTime);
+            }
+            return;
+        }
+    
+        // If there's no current track, just fade in the new track
+        if (!this.currentTrack) {
+            this.fadeIn(newTrack, fadeInTime);
+        } else {
+            // Fade out the current track, then fade in the new one
+            this.fadeOut(this.currentTrack, fadeOutTime, () => {
+                this.fadeIn(newTrack, fadeInTime);
+            });
+        }
+    }
+    
+    fadeOut(audioElement, duration, callback) {
+        let volumeStep = audioElement.volume / (duration / 100);
+        this.currentTrackInterval = setInterval(() => {
+            if (audioElement.volume > 0) {
+                audioElement.volume = Math.max(0, audioElement.volume - volumeStep);
+            } else {
+                clearInterval(this.currentTrackInterval);
+                audioElement.pause();
+                this.currentTrack = null;
+                if (callback) callback();
+            }
+        }, 100);
+    }
+    
+    fadeIn(audioElement, duration, maxVolume = 0.5) {
+        this.currentTrack = audioElement;
+        audioElement.volume = 0;
+        audioElement.play();
+        let volumeStep = maxVolume / (duration / 100);
+        this.currentTrackInterval = setInterval(() => {
+            if (audioElement.volume < maxVolume) {
+                audioElement.volume = Math.min(maxVolume, audioElement.volume + volumeStep);
+            } else {
+                clearInterval(this.currentTrackInterval);
+            }
+        }, 100);
+    }
+
+    updateBestScore(newScore, gameMode) {
+        let bestScore;
+        if (gameMode === 'CLASSIC') {
+            bestScore = this.bestClassic;
+            if (newScore > this.bestClassic) {
+                this.bestClassic = newScore;
+                bestScore = newScore;
+                localStorage.setItem('omniflap-bestClassic', newScore);
+            }
+        }
+        else if (gameMode === 'HYPER') {
+            bestScore = this.bestHyper;
+            if (newScore > this.bestHyper) {
+                this.bestHyper = newScore;
+                bestScore = newScore;
+                localStorage.setItem('omniflap-bestHyper', newScore);
+            }
+        }
+        else {
+            bestScore = 0;
+        }
+        return bestScore;
+    }
+    
 
 }

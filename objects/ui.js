@@ -165,15 +165,21 @@ export class Button {
 }
 
 export class TextElement {
-    constructor({uiParent, loc, width, height, style, bkgStyle, visible, text}) {
+    constructor({uiParent, loc, width, height, textStyle, bkgStyle, visible, text, centerText}) {
         this.type = 'textElement';
         this.uiParent = uiParent;
         this.loc = loc;
         this.width = width;
         this.height = height;
-        this.style = style;
         this.text = text;
         this.bkgStyle = bkgStyle;
+        this.textStyle = textStyle;
+
+        // center the text if specified
+        if (centerText !== undefined && centerText) {
+            this.loc.x -= this.width/2;
+            this.loc.y -= this.height/2;
+        }
 
         // set visibility
         if (visible === undefined) {
@@ -201,10 +207,15 @@ export class TextElement {
             c.fillRect(this.loc.x, this.loc.y, this.width, this.height);
         }
 
-        // draw element
-        this.applyStyle(c, this.style);
+        // draw text
+        this.applyStyle(c, this.textStyle);
         c.fillText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
-        c.strokeText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
+
+        // draw stroke text if lineWidth is defined and non-zero
+        if (this.textStyle.lineWidth !== undefined && 
+            this.textStyle.lineWidth !==0) {
+            c.strokeText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
+        }
 
         c.restore();
     }

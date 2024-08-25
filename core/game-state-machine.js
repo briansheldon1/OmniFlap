@@ -279,6 +279,10 @@ class GameOverState {
     }
 
     enter() {
+
+        // set your score count
+        this.gameManager.yourScoreCount.text = this.gameManager.count;
+
         // make menuUI visible
         this.gameManager.deathUI.visible = true;
 

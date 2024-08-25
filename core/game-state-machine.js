@@ -15,6 +15,7 @@ export default class GameStateMachine {
         // set current state up
         this.currentState = this.states.PRE_GAME;
         this.currentState.enter();
+
     }
 
     transitionTo(state) {
@@ -49,7 +50,7 @@ class PreGameState {
     enter() {
         // initialize startButton
         this.gameManager.pregameStartBtn.visible = true;
-        this.gameManager.pregameStartBtn.setOnClick(() => {
+        this.gameManager.pregameStartBtn.setOnClickOnce(() => {
             this.gameManager.pregameStartBtn.visible = false;
             this.machine.transitionTo('MENU');
         })
@@ -96,10 +97,12 @@ class MenuState {
             this.machine.transitionTo('HYPER');
         });
 
-        // play music
-        this.gameManager.backgroundMusic.play();
+        // fade out background music and fade in menu music
+        this.gameManager.menuMusic.currentTime = 0;
+        this.gameManager.changeTrack(this.gameManager.menuMusic, 1500);
 
         // move player to visible position
+        this.gameManager.player.halted = false;
         this.gameManager.player.loc = {x: this.gameManager.canvasWidth/2, y: this.gameManager.canvasHeight/2.4};
         this.gameManager.player.vel = {x: 0, y: 0, theta: 0};
         this.gameManager.player.theta = Math.PI/8;
@@ -109,6 +112,7 @@ class MenuState {
     exit() {
         // Cleanup menu state
         this.gameManager.menuUI.visible = false;
+        this.gameManager.backgroundMusic.currentTime = 0;
     }
 
     update() {
@@ -147,6 +151,9 @@ class ClassicMode {
         // ensure player and rungs not halted
         this.gameManager.player.reset({resetLoc: false});
         this.gameManager.rungs.reset();
+
+        // play music
+        this.gameManager.changeTrack(this.gameManager.backgroundMusic);
     }
 
     exit() {
@@ -233,6 +240,14 @@ class HyperMode extends ClassicMode {
         this.origSpawnRate = this.gameManager.rungSpawnRate;
         this.origRungSpeed = this.gameManager.rungs.rungSpeed;
     }
+    enter() {
+        super.enter();
+
+        // reset state
+        this.currLevel = 1;
+        this.currMult = 1;
+        this.gameManager.level = 1;
+    }
     update() {
 
         // speed up when new level reached
@@ -283,7 +298,11 @@ class GameOverState {
         // set your score count
         this.gameManager.yourScoreCount.text = this.gameManager.count;
 
-        // make menuUI visible
+        // set best score count
+        let bestScore = this.gameManager.updateBestScore(this.gameManager.count, this.machine.lastState);
+        this.gameManager.bestScoreCount.text = bestScore;
+
+        // make deathUI visible
         this.gameManager.deathUI.visible = true;
 
         // add onclick for restart button
@@ -306,6 +325,7 @@ class GameOverState {
     exit() {
         // Cleanup game over state
         this.gameManager.deathUI.visible = false;
+        
     }
 
     render(c) {

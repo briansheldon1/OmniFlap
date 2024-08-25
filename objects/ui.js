@@ -34,6 +34,7 @@ export class UIFrame {
         let y_rel = y - this.loc.y;
         
         for (const [key, element] of Object.entries(this.elements)) {
+            if (element.type !== 'button') {continue;}
             if (x_rel > element.loc.x && x_rel < element.loc.x + element.width && 
                 y_rel > element.loc.y && y_rel < element.loc.y + element.height) {
                 element.onClick();
@@ -58,7 +59,7 @@ export class UIFrame {
 
 
 export class Button {
-    constructor({uiParent, loc, width, height, style, onClick, centerBtn, text}) {
+    constructor({uiParent, loc, width, height, textStyle, bkgStyle, onClick, centerBtn, text}) {
         /*  
             style: {
                 text (str): string of text to display on button
@@ -73,6 +74,7 @@ export class Button {
                 bkgBorderWidth: border width of button
             }
         */
+        this.type = 'button';
         this.uiParent = uiParent;
         this.loc = loc; // rel to uiParent
         this.width = width;
@@ -83,7 +85,8 @@ export class Button {
         this.visible = true;
 
         // styles
-        this.style = style;
+        this.textStyle = textStyle;
+        this.bkgStyle = bkgStyle;
 
         // center the button if specified
         if (centerBtn !== undefined && centerBtn) {
@@ -118,31 +121,20 @@ export class Button {
         }
 
         // draw button background
-        this.applyBkgStyle(c);
+        this.applyStyle(c, this.bkgStyle);
         c.fillRect(this.loc.x, this.loc.y, this.width, this.height);
         c.strokeRect(this.loc.x, this.loc.y, this.width, this.height);
 
         // draw button text
-        this.applyTextStyle(c);
+        this.applyStyle(c, this.textStyle);
         c.fillText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
 
         c.restore();
     }
-    applyTextStyle(c) {
-
-        // apply style for text
-        c.font = this.style.font;
-        c.fillStyle = this.style.fillStyle;
-        c.strokeStyle = this.style.strokeStyle;
-        c.lineWidth = this.style.lineWidth;
-        c.textAlign = this.style.textAlign;
-        c.textBaseline = this.style.textBaseline;
-    }
-    applyBkgStyle(c) {
-        // apply style for background
-        c.fillStyle = this.style.bkgColor;
-        c.strokeStyle = this.style.bkgBorderColor;
-        c.lineWidth = this.style.bkgBorderWidth;
+    applyStyle(c, style) {
+        for (let key in style) {
+            c[key] = style[key];
+        }
     }
     handleClick(x, y) {
         /* Returns boolean of whether click went through */
@@ -173,12 +165,15 @@ export class Button {
 }
 
 export class TextElement {
-    constructor({uiParent, loc, width, height, style, visible}) {
+    constructor({uiParent, loc, width, height, style, bkgStyle, visible, text}) {
+        this.type = 'textElement';
         this.uiParent = uiParent;
         this.loc = loc;
         this.width = width;
         this.height = height;
         this.style = style;
+        this.text = text;
+        this.bkgStyle = bkgStyle;
 
         // set visibility
         if (visible === undefined) {
@@ -200,22 +195,29 @@ export class TextElement {
             c.translate(this.uiParent.loc.x, this.uiParent.loc.y);
         }
 
+        // draw background
+        if (this.bkgStyle !== undefined) {
+            this.applyStyle(c, this.bkgStyle);
+            c.fillRect(this.loc.x, this.loc.y, this.width, this.height);
+        }
+
         // draw element
-        this.applyStyle(c);
-        c.fillStyle = 'black';
-        c.textAlign = 'center';
-        c.textBaseline = 'middle';
+        this.applyStyle(c, this.style);
         c.fillText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
+        c.strokeText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
 
         c.restore();
     }
-    applyStyle(c) {
-        return;
+    applyStyle(c, style) {
+        for (let key in style) {
+            c[key] = style[key];
+        }
     }
 }
 
 export class ImageElement {
     constructor({uiParent, loc, width, height, img, visible}) {
+        this.type = 'imageElement';
         this.uiParent = uiParent;
         this.loc = loc;
         this.width = width;

@@ -50,6 +50,7 @@ class PreGameState {
         // initialize startButton
         this.gameManager.pregameStartBtn.visible = true;
         this.gameManager.pregameStartBtn.setOnClick(() => {
+            this.gameManager.pregameStartBtn.visible = false;
             this.machine.transitionTo('MENU');
         })
     }
@@ -99,7 +100,7 @@ class MenuState {
         this.gameManager.backgroundMusic.play();
 
         // move player to visible position
-        this.gameManager.player.loc = {x: this.gameManager.canvasWidth/2, y: this.gameManager.canvasHeight/4};
+        this.gameManager.player.loc = {x: this.gameManager.canvasWidth/2, y: this.gameManager.canvasHeight/2.4};
         this.gameManager.player.vel = {x: 0, y: 0, theta: 0};
         this.gameManager.player.theta = Math.PI/8;
     }
@@ -161,6 +162,8 @@ class ClassicMode {
     }
 
     update() {
+
+
         // update game objects
         this.gameManager.player.update();
         this.gameManager.rungs.update();
@@ -297,7 +300,7 @@ class GameOverState extends MenuState {
 
     exit() {
         // Cleanup game over state
-        this.gameManager.menuUI.visible = false;
+        this.gameManager.deathUI.visible = false;
     }
 
     render(c) {

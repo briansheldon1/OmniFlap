@@ -51,7 +51,7 @@ export default class GameManager {
      */
     init_defButtonStyle() {
         this.defaultBtnTextStyle = {
-            font: `${Math.floor(this.canvasWidth/40)}px "Press Start 2P"`,
+            font: `${Math.floor(this.canvasWidth/35)}px "Press Start 2P"`,
             fillStyle: 'white',
             strokeStyle: 'black',
             lineWidth: Math.floor(this.canvasWidth/100),
@@ -64,8 +64,8 @@ export default class GameManager {
             strokeStyle: 'black',
             lineWidth: Math.floor(this.canvasWidth/200)
         };
-        this.btnWidth = this.canvasWidth/3;
-        this.btnHeight = this.canvasHeight/20;
+        this.btnWidth = this.canvasWidth/2.5;
+        this.btnHeight = this.canvasHeight/18;
         this.btnMarginTop = this.canvasHeight/40;
     }
     /**
@@ -98,27 +98,24 @@ export default class GameManager {
 
 
         // initialize menu UI
-        this.menuUI = new UIFrame({loc: {x: this.canvasWidth/2, y: this.canvasHeight/2}});
+        this.menuUI = new UIFrame({loc: {x: this.canvasWidth/2, y: this.canvasHeight/1.7}});
         this.menuUI.visible = false;
 
         // game title text element
-        /*
         let titleStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
         titleStyle.font = `${Math.floor(this.canvasWidth/10)}px "Press Start 2P"`;
         titleStyle.fillStyle = 'orange';
-        titleStyle.lineWidth = 0;
-        let thisbkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
+        titleStyle.lineWidth = Math.floor(this.canvasWidth/150);
         let titleArgs = {
             text: 'Omni Flap',
-            loc: {x: -this.canvasWidth/3, y: -this.canvasHeight/5},
+            loc: {x: 0, y: -this.canvasHeight/3},
             width: this.canvasWidth/2,
             height: this.canvasHeight/10,
             textStyle: titleStyle,
-            bkgStyle: thisbkgStyle
+            centerText: true
         };
         let title = new TextElement(titleArgs);
         this.menuUI.addElement('title', title);
-        */
 
         // Classic button
         let textStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
@@ -214,7 +211,7 @@ export default class GameManager {
             text: 'Main Menu',
             loc: {x: -(halfWidth-btnWidth)/2, y: 0},
             width: halfWidth,
-            height: this.canvasHeight/20,
+            height: this.btnHeight,
             textStyle: textStyle,
             bkgStyle: bkgStyle,
             centerBtn: true
@@ -227,7 +224,7 @@ export default class GameManager {
             text: 'Add To Leaderboard',
             loc: {x: 0, y: this.canvasHeight/10},
             width: btnWidth,
-            height: this.canvasHeight/20,
+            height: this.btnHeight,
             textStyle: textStyle,
             bkgStyle: bkgStyle,
             centerBtn: true
@@ -332,7 +329,7 @@ export default class GameManager {
 
     handleClick(mouseX, mouseY) {
         for (let i=0; i<this.uiArray.length; i++) {
-            const clicked = this.uiArray[i].handleClick(mouseX, mouseY);
+            let clicked = this.uiArray[i].handleClick(mouseX, mouseY);
             if (clicked) {
                 return;
             }

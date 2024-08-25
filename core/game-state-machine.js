@@ -271,10 +271,11 @@ class HyperMode extends ClassicMode {
         }, this.gameManager.rungSpawnRate);
     }
 }
-class GameOverState extends MenuState {
+class GameOverState {
     constructor(machine) {
-        super(machine);
         this.key = 'GAME_OVER';
+        this.machine = machine;
+        this.gameManager = machine.gameManager;
     }
 
     enter() {

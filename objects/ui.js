@@ -210,13 +210,16 @@ export class TextElement {
         // draw text
         if (this.textStyle !== undefined) {
             this.applyStyle(c, this.textStyle);
-            c.fillText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
 
             // draw stroke text if lineWidth is defined and non-zero
             if (this.textStyle.lineWidth !== undefined && 
                 this.textStyle.lineWidth !==0) {
                 c.strokeText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
             }
+            
+            c.fillText(this.text, this.loc.x + this.width/2, this.loc.y + this.height/2);
+
+            
         }
 
         c.restore();

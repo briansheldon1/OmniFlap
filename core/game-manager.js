@@ -180,7 +180,9 @@ export default class GameManager {
 
     init_deathUI() {
 
-
+        // define general styles
+        let textStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
+        let bkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
 
         // initialize death UI
         this.deathUI = new UIFrame({loc: {x: this.canvasWidth/2, y: this.canvasHeight/2}});
@@ -188,12 +190,45 @@ export default class GameManager {
 
         let btnWidth = this.btnWidth*1.6;
         let halfWidth = btnWidth*0.5*0.95;
+
+        // Death background box (technically text element)
+        let deathBoxBkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
+        let deathBoxBkgArgs = {
+            text: '',
+            loc: {x: 0, y: -this.canvasHeight/6},
+            width: btnWidth*0.8,
+            height: this.canvasHeight/3,
+            bkgStyle: deathBoxBkgStyle,
+            centerText: true
+        };
+        let deathBoxBkg = new TextElement(deathBoxBkgArgs);
+        this.deathUI.addElement('deathBoxBkg', deathBoxBkg);
+        
+
+
+        // YourScoreLit text element
+
+        // YourScore text element
+        let yourScoreTextStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
+        yourScoreTextStyle.font = `${Math.floor(this.canvasWidth/20)}px "Press Start 2P"`;
+        yourScoreTextStyle.lineWidth = Math.floor(this.canvasWidth/90);
+        let yourScoreArgs = {
+            text: 0,
+            loc: {x: 0, y: -this.canvasHeight/4},
+            width: this.canvasWidth/10,
+            height: this.canvasHeight/10,
+            textStyle: yourScoreTextStyle,
+            centerText: true
+        };
+        this.yourScoreCount = new TextElement(yourScoreArgs);
+        this.deathUI.addElement('yourScore', this.yourScoreCount);
+
+        // HighScoreLit text element
+
+        // HighScore text element
+
         
         // Restart button (halfWidth + smallStyle)
-        let textStyle = JSON.parse(JSON.stringify(this.defaultBtnTextStyle));
-        let bkgStyle = JSON.parse(JSON.stringify(this.defaultBtnBkgStyle));
-        let smallStyle = JSON.parse(JSON.stringify(textStyle));
-        smallStyle.font = `${Math.floor(this.canvasWidth/60)}px "Press Start 2P"`;
         let restartBtnArgs = {
             text: 'Restart',
             loc: {x: (halfWidth-btnWidth)/2, y: 0},
@@ -205,6 +240,7 @@ export default class GameManager {
         };
         this.restartButton = new Button(restartBtnArgs);
         this.deathUI.addElement('restartButton', this.restartButton);
+
 
         // Main Menu button (halfWidth + smallStyle)
         let mainMenuBtnArgs = {

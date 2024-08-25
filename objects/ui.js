@@ -165,7 +165,7 @@ export class Button {
 }
 
 export class TextElement {
-    constructor({uiParent, loc, width, height, textStyle, bkgStyle, visible, text, centerText}) {
+    constructor({uiParent, loc, width, height, textStyle, bkgStyle, visible, text, centerText, cornerRadius}) {
         this.type = 'textElement';
         this.uiParent = uiParent;
         this.loc = loc;
@@ -174,6 +174,7 @@ export class TextElement {
         this.text = text;
         this.bkgStyle = bkgStyle;
         this.textStyle = textStyle;
+        this.cornerRadius = cornerRadius;
 
         // center the text if specified
         if (centerText !== undefined && centerText) {
@@ -204,7 +205,11 @@ export class TextElement {
         // draw background
         if (this.bkgStyle !== undefined) {
             this.applyStyle(c, this.bkgStyle);
+            if (this.cornerRadius !== undefined) {
+                this.drawRoundedRect(c, this.loc.x, this.loc.y, this.width, this.height, this.cornerRadius);
+            } else {
             c.fillRect(this.loc.x, this.loc.y, this.width, this.height);
+            }
         }
 
         // draw text
@@ -227,6 +232,25 @@ export class TextElement {
     applyStyle(c, style) {
         for (let key in style) {
             c[key] = style[key];
+        }
+    }
+    drawRoundedRect(c, x, y, width, height, radius) {
+        c.beginPath();
+        c.moveTo(x + radius, y);
+        c.lineTo(x + width - radius, y);
+        c.arcTo(x + width, y, x + width, y + radius, radius);
+        c.lineTo(x + width, y + height - radius);
+        c.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+        c.lineTo(x + radius, y + height);
+        c.arcTo(x, y + height, x, y + height - radius, radius);
+        c.lineTo(x, y + radius);
+        c.arcTo(x, y, x + radius, y, radius);
+        c.closePath();
+        c.fill(); // To fill the rounded rectangle
+        // ctx.stroke(); // Uncomment to add an outline
+        if (this.bkgStyle.lineWidth !== undefined && 
+            this.bkgStyle.lineWidth !== 0) {
+            c.stroke();
         }
     }
 }

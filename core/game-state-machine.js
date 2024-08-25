@@ -6,6 +6,7 @@ export default class GameStateMachine {
             PRE_GAME: new PreGameState(this),
             MENU: new MenuState(this),
             CLASSIC: new ClassicMode(this),
+            HYPER: new HyperMode(this),
             GAME_OVER: new GameOverState(this)
         };
         
@@ -90,6 +91,9 @@ class MenuState {
         this.gameManager.menuUI.elements['playButton'].setOnClick(() => {
             this.machine.transitionTo('CLASSIC');
         })
+        this.gameManager.hyperButton.setOnClickOnce(() => {
+            this.machine.transitionTo('HYPER');
+        });
 
         // play music
         this.gameManager.backgroundMusic.play();
@@ -210,7 +214,60 @@ class ClassicMode {
     }
 }
 
+class HyperMode extends ClassicMode {
+    constructor(machine) {
+        super(machine);
+        this.key = 'HYPER';
 
+        // speed multiplier for hyper mode
+        this.currMult = 1;
+        this.maxMult = 3;
+        this.rungsPerLevel = 1;
+        this.currLevel = 1;
+        this.maxLevel = 100;
+
+        // store old spawn rates and rung sped
+        this.origSpawnRate = this.gameManager.rungSpawnRate;
+        this.origRungSpeed = this.gameManager.rungs.rungSpeed;
+    }
+    update() {
+
+        // speed up when new level reached
+        this.currLevel = 1+Math.floor(this.gameManager.count/this.rungsPerLevel);
+        if (this.currLevel > this.gameManager.level) {
+            this.speedUp();
+        }
+
+        super.update();
+    }
+    exit() {
+        super.exit();
+        this.gameManager.rungSpawnRate = this.origSpawnRate;
+        this.gameManager.rungs.rungSpeed = this.origRungSpeed;
+    }
+    speedUp() {
+
+        // update level
+        this.gameManager.level = this.currLevel;
+
+        // update curr multiplier
+        this.currMult = 1+(this.gameManager.level/this.maxLevel)*(this.maxMult-1);
+
+        // increase speed and spawn rate
+        this.gameManager.rungSpawnRate = this.origSpawnRate/this.currMult;
+        this.gameManager.rungs.rungSpeed = this.origRungSpeed*this.currMult;
+        this.gameManager.rungs.rungsArray.forEach(rung => {
+            rung.vel.x *= this.currMult;
+            rung.vel.y *= this.currMult;
+        });
+
+        // create new spawn interval
+        clearInterval(this.gameManager.spawnInterval);
+        this.gameManager.spawnInterval = setInterval(() => {
+            this.gameManager.rungs.spawn_rung()
+        }, this.gameManager.rungSpawnRate);
+    }
+}
 class GameOverState extends MenuState {
     constructor(machine) {
         super(machine);

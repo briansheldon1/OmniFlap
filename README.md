@@ -2,7 +2,7 @@
 
 *What if Flappy Bird wasn't so limited*
 
-![alt text](https://github.com/briansheldon1/OmniFlap/tree/main/assets/nongame/readme_topimg.png "Logo Title Text 1")
+![alt text](assets/nongame/readme_topimg.png "Logo Title Text 1")
 
 ## Overview
 

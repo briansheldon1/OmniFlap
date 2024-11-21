@@ -1,13 +1,14 @@
-# OmniFlap (Omni-Directional Flappy Bird)
-
-*What if Flappy Bird wasn't so limited*
-
 ![alt text](assets/nongame/readme_topimg.png "Logo Title Text 1")
+*<center>What if Flappy Bird wasn't so limited?</center>*
 
 ## Overview
 
-OmniFlap is a browser-based game built using HTML5 Canvas and JavaScript, and brings about a unique twist to the classic Flappy Bird game. In this game, Flappy Bird can move in any direction - but with the rungs coming from every angle the challenge hasn't become easier.  
+OmniFlap (Omni-Directional Flappy Bird) is a browser-based game 
+built using HTML5 Canvas, and brings about a unique twist to the 
+classic Flappy Bird game. In this game, Flappy Bird can move in any direction - 
+but with the rungs coming from every angle the challenge hasn't become easier.  
 
+![alt text](assets/nongame/omniflap-demo.gif "OmniFlap Demo")
 
 ## Project Goals
 

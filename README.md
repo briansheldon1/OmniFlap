@@ -5,27 +5,34 @@
 
 <br>
 
+
+
 # Overview
 
-<div style="display: flex; align-items: flex-start; justify-content: space-evenly;">
-  <!-- Left Column: Text -->
-  <div style="flex: 1; margin-right: 20px; justify-content: space-evenly;">
-    <p>
-      OmniFlap (Omni-Directional Flappy Bird) is a browser-based game 
+<img style="margin-left:20px;" align="right" src="assets/nongame/omniflap-demo.gif">
+
+<p>
+OmniFlap (Omni-Directional Flappy Bird) is a browser-based game 
 built using HTML5 Canvas, and brings about a unique twist to the 
 classic Flappy Bird game. In this game, Flappy Bird can move in any direction - 
 but with the rungs coming from every angle the challenge hasn't become easier.  
-    </p>
-    <a style="font-size: 20px;" href="https://skillsagelearn.com/omniflap">Try it here</a>
-  </div>
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<a style="font-size:20px; margin-left:15%" href="https://skillsagelearn.com/omniflap">Try the game here</a>
 
-  <!-- Right Column: Link and GIF -->
-  <div style="flex: 1; text-align: center;">
-    <img src="assets/nongame/omniflap-demo.gif" alt="GIF Preview" style="max-width: 100%; height: auto;">
-  </div>
-</div>
+
 
 <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 
 # Project Goals
 
@@ -67,7 +74,7 @@ While the game was very fun to make, it definitely made me appreciate what game 
 
 The game is also not as well-optimized as a game built in a game engine. Since the velocity of the objects does not incorporate the current frame rate (which most engines do), the game's play will change considerably depending on how fast the computer is. Try running the game along with other programs to see everything slow down.
 
-All in all, however, I succeeded in building this playable game and achieved my goal of learning more about game development. I believe that creating the game without a game engine was difficult but may have provided a better understanding of how game engines function under the hood.
+All in all, however, I succeeded in building this playable game and achieved my goal of learning more about game development. I believe that creating the game without a game engine was difficult but may have provided a deeper understanding of game development
 
 
 

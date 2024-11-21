@@ -1,8 +1,8 @@
-# OmniFlap
+# OmniFlap (Omni-Directional Flappy Bird)
 
 *What if Flappy Bird wasn't so limited*
 
----
+![alt text](https://github.com/briansheldon1/OmniFlap/assets/nongame/readme_topimg.png "Logo Title Text 1")
 
 ## Overview
 
